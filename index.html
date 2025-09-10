@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solana Airdrop - Claim Your Tokens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 50%, #10B981 100%);
+        background-attachment: fixed;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      /* Animated background particles */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image:
+          radial-gradient(circle at 20% 80%, rgba(120, 255, 214, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+        animation: float 6s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+      }
+
+      .container {
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header with claim button */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        background: url('https://static.vecteezy.com/system/resources/previews/044/626/788/non_2x/solana-logo-on-transparent-background-free-vector.jpg') no-repeat center;
+        background-size: contain;
+        flex-shrink: 0;
+      }
+
+      /* Solana logo for main title */
+      .hero-logo {
+        width: 60px;
+        height: 60px;
+        margin-right: 20px;
+        animation: logo-glow 3s ease-in-out infinite alternate;
+        position: relative;
+      }
+
+      .hero-logo svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-title-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+
+      @keyframes logo-glow {
+        0% {
+          filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
+          transform: scale(1);
+        }
+        100% {
+          filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+          transform: scale(1.05);
+        }
+      }
+
+      .logo-text {
+        font-size: 24px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #ffffff, #e0e7ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .claim-btn {
+        background: linear-gradient(135deg, #10B981, #06B6D4);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .claim-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .claim-btn:hover::before {
+        left: 100%;
+      }
+
+      .claim-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      }
+
+      /* Main content area */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .hero-section {
+        max-width: 600px;
+        margin-bottom: 60px;
+      }
+
+      .hero-title {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(45deg, #ffffff, #f8fafc, #e2e8f0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 30px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+      }
+
+      .airdrop-amount {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+        padding: 16px 32px;
+        border-radius: 16px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+      }
+
+      /* Countdown Timer */
+      .countdown-container {
+        margin-bottom: 40px;
+      }
+
+      .countdown-title {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .countdown-timer {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .countdown-item {
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 12px;
+        padding: 16px 20px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        min-width: 80px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+
+      .countdown-number {
+        display: block;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1;
+      }
+
+      .countdown-label {
+        display: block;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+      }
+
+      /* Floating Particles */
+      .floating-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: float-particle 20s linear infinite;
+      }
+
+      /* Solana brand colored particles */
+      .particle:nth-child(1) { left: 10%; animation-delay: 0s; width: 6px; height: 6px; background: rgba(0, 255, 163, 0.6); }
+      .particle:nth-child(2) { left: 20%; animation-delay: 2s; width: 8px; height: 8px; background: rgba(220, 31, 255, 0.6); }
+      .particle:nth-child(3) { left: 30%; animation-delay: 4s; width: 4px; height: 4px; background: rgba(153, 69, 255, 0.6); }
+      .particle:nth-child(4) { left: 40%; animation-delay: 6s; width: 10px; height: 10px; background: rgba(0, 255, 163, 0.4); }
+      .particle:nth-child(5) { left: 50%; animation-delay: 8s; width: 5px; height: 5px; background: rgba(6, 182, 212, 0.6); }
+      .particle:nth-child(6) { left: 60%; animation-delay: 10s; width: 7px; height: 7px; background: rgba(220, 31, 255, 0.4); }
+      .particle:nth-child(7) { left: 70%; animation-delay: 12s; width: 9px; height: 9px; background: rgba(139, 92, 246, 0.6); }
+      .particle:nth-child(8) { left: 80%; animation-delay: 14s; width: 6px; height: 6px; background: rgba(0, 255, 163, 0.5); }
+      .particle:nth-child(9) { left: 90%; animation-delay: 16s; width: 8px; height: 8px; background: rgba(220, 31, 255, 0.5); }
+      .particle:nth-child(10) { left: 15%; animation-delay: 18s; width: 4px; height: 4px; background: rgba(6, 182, 212, 0.5); }
+
+      @keyframes float-particle {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-10vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Glowing orbs */
+      .glow-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(1px);
+        animation: glow-float 8s ease-in-out infinite;
+      }
+
+      .glow-orb-1 {
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+        top: 10%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+
+      .glow-orb-2 {
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+        top: 60%;
+        right: 15%;
+        animation-delay: 4s;
+      }
+
+      .glow-orb-3 {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);
+        bottom: 20%;
+        left: 20%;
+        animation-delay: 2s;
+      }
+
+      @keyframes glow-float {
+        0%, 100% {
+          transform: translateY(0px) scale(1);
+        }
+        50% {
+          transform: translateY(-30px) scale(1.1);
+        }
+      }
+
+      /* Connect wallet button */
+      .connect-wallet-btn {
+        background: linear-gradient(135deg, #8B5CF6, #A855F7);
+        border: none;
+        padding: 20px 48px;
+        border-radius: 16px;
+        color: white;
+        font-weight: 600;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+        position: relative;
+        overflow: hidden;
+        min-width: 280px;
+      }
+
+      .connect-wallet-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .connect-wallet-btn:hover::before {
+        left: 100%;
+      }
+
+      .connect-wallet-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5);
+      }
+
+      /* Features section */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-top: 80px;
+        max-width: 900px;
+        width: 100%;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .feature-description {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+      }
+
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .header {
+          padding: 16px 20px;
+        }
+
+        .hero-title {
+          font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1.1rem;
+        }
+
+        .connect-wallet-btn {
+          padding: 18px 36px;
+          font-size: 16px;
+          min-width: 240px;
+        }
+
+        .claim-btn {
+          padding: 10px 20px;
+          font-size: 14px;
+        }
+
+        .features {
+          grid-template-columns: 1fr;
+          margin-top: 60px;
+        }
+
+        .countdown-timer {
+          gap: 12px;
+        }
+
+        .countdown-item {
+          padding: 12px 16px;
+          min-width: 70px;
+        }
+
+        .countdown-number {
+          font-size: 1.5rem;
+        }
+
+        .countdown-label {
+          font-size: 0.7rem;
+        }
+
+        .hero-logo {
+          width: 50px;
+          height: 50px;
+          margin-right: 15px;
+        }
+
+        .hero-title-container {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+    </div>
+
+    <!-- Glowing orbs -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <div class="container">
+      <!-- Header with logo and claim button -->
+      <header class="header">
+        <div class="logo-container">
+          <div class="logo"></div>
+          <span class="logo-text">Solana</span>
+        </div>
+        <button class="claim-btn connect">Claim Now</button>
+      </header>
+
+      <!-- Main content -->
+      <main class="main-content">
+        <div class="hero-section">
+          <div class="hero-title-container">
+            <div class="hero-logo">
+              <svg viewBox="0 0 101 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M100.48 69.3817L83.8068 86.8015C83.4444 87.1799 83.0058 87.4816 82.5185 87.6878C82.0312 87.894 81.5055 88.0003 80.9744 88H1.93563C1.55849 88 1.18957 87.8926 0.875202 87.6912C0.560829 87.4897 0.316717 87.2027 0.175335 86.8659C0.0339534 86.529 0.000506742 86.1566 0.0747448 85.7980C0.149027 85.4395 0.336095 85.1102 0.610998 84.8525L17.2834 67.4317C17.6457 67.0533 18.0844 66.7516 18.5717 66.5454C19.059 66.3392 19.5847 66.2329 20.1158 66.2332H99.1546C99.5317 66.2332 99.9007 66.3406 100.215 66.542C100.529 66.7435 100.773 67.0305 100.915 67.3674C101.056 67.7042 101.09 68.0766 101.015 68.4352C100.941 68.7937 100.754 69.123 100.479 69.3807L100.48 69.3817Z" fill="url(#paint0_linear)"/>
+                <path d="M100.48 1.61832L83.8068 19.0381C83.4444 19.4165 83.0058 19.7182 82.5185 19.9244C82.0312 20.1306 81.5055 20.2369 80.9744 20.2366H1.93563C1.55849 20.2366 1.18957 20.1292 0.875202 19.9278C0.560829 19.7263 0.316717 19.4393 0.175335 19.1025C0.0339534 18.7656 0.000506742 18.3932 0.0747448 18.0346C0.149027 17.6761 0.336095 17.3468 0.610998 17.0891L17.2834 -0.331704C17.6457 -0.710132 18.0844 -1.01188 18.5717 -1.21808C19.059 -1.42427 19.5847 -1.53053 20.1158 -1.53027H99.1546C99.5317 -1.53027 99.9007 -1.42286 100.215 -1.22143C100.529 -1.01999 100.773 -0.732992 100.915 -0.396132C101.056 -0.0592716 101.09 0.313171 101.015 0.671748C100.941 1.03033 100.754 1.35962 100.479 1.61734L100.48 1.61832Z" fill="url(#paint1_linear)"/>
+                <path d="M83.8068 52.9199C83.4444 52.5415 83.0058 52.2398 82.5185 52.0336C82.0312 51.8274 81.5055 51.7211 80.9744 51.7214H1.93563C1.55849 51.7214 1.18957 51.8288 0.875202 52.0302C0.560829 52.2317 0.316717 52.5187 0.175335 52.8555C0.0339534 53.1924 0.000506742 53.5648 0.0747448 53.9233C0.149027 54.2819 0.336095 54.6112 0.610998 54.8689L17.2834 72.2897C17.6457 72.6681 18.0844 72.9698 18.5717 73.176C19.059 73.3822 19.5847 73.4885 20.1158 73.4882H99.1546C99.5317 73.4882 99.9007 73.3808 100.215 73.1794C100.529 72.9779 100.773 72.6909 100.915 72.3541C101.056 72.0172 101.09 71.6448 101.015 71.2863C100.941 70.9277 100.754 70.5984 100.479 70.3407L83.8068 52.9199Z" fill="url(#paint2_linear)"/>
+                <defs>
+                  <linearGradient id="paint0_linear" x1="6.67817" y1="16.9512" x2="94.5486" y2="16.9512" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#00FFA3"/>
+                    <stop offset="1" stop-color="#DC1FFF"/>
+                  </linearGradient>
+                  <linearGradient id="paint1_linear" x1="6.67817" y1="16.9512" x2="94.5486" y2="16.9512" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#00FFA3"/>
+                    <stop offset="1" stop-color="#DC1FFF"/>
+                  </linearGradient>
+                  <linearGradient id="paint2_linear" x1="6.67817" y1="16.9512" x2="94.5486" y2="16.9512" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#00FFA3"/>
+                    <stop offset="1" stop-color="#DC1FFF"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <h1 class="hero-title">Solana Airdrop</h1>
+          </div>
+          <p class="hero-subtitle">
+            Connect your wallet to claim your exclusive SOL tokens.
+            Limited time offer for early adopters and community members.
+          </p>
+          <div class="airdrop-amount">
+            🎁 Up to 100 SOL Available
+          </div>
+
+          <!-- Countdown Timer -->
+          <div class="countdown-container">
+            <div class="countdown-title">Airdrop Ends In</div>
+            <div class="countdown-timer">
+              <div class="countdown-item">
+                <span class="countdown-number" id="days">00</span>
+                <span class="countdown-label">Days</span>
+              </div>
+              <div class="countdown-item">
+                <span class="countdown-number" id="hours">00</span>
+                <span class="countdown-label">Hours</span>
+              </div>
+              <div class="countdown-item">
+                <span class="countdown-number" id="minutes">00</span>
+                <span class="countdown-label">Minutes</span>
+              </div>
+              <div class="countdown-item">
+                <span class="countdown-number" id="seconds">00</span>
+                <span class="countdown-label">Seconds</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="connect-wallet-btn connect">Connect Wallet</button>
+        </div>
+
+        <!-- Features section -->
+        <div class="features">
+          <div class="feature-card">
+            <span class="feature-icon">⚡</span>
+            <h3 class="feature-title">Lightning Fast</h3>
+            <p class="feature-description">Instant transactions on the fastest blockchain network</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔒</span>
+            <h3 class="feature-title">Secure & Safe</h3>
+            <p class="feature-description">Your wallet and tokens are protected by advanced security</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">💎</span>
+            <h3 class="feature-title">Premium Rewards</h3>
+            <p class="feature-description">Exclusive access to high-value token distributions</p>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="always-1756710230856.js"></script>
+  </body>
+</html>
